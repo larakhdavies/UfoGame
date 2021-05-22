@@ -52,11 +52,14 @@ const displayIncorrectGuesses = (incorrectGuesses) => {
   }
 };
 
-const promptForCharInput = (questionToUser, cbOnCharInput) => {
+const promptForLetterInput = (questionToUser, cbOnCharInput) => {
   rl.question(questionToUser, (input) => {
     if (input.length > 1){
       console.log('\nI cannot understand your input. Please enter a single letter.\n');
-      promptForCharInput(questionToUser, cbOnCharInput);
+      promptForLetterInput(questionToUser, cbOnCharInput);
+    } else if(!(/[a-zA-Z]/).test(input)) {
+      console.log('\nPlease enter a letter only (a-Z).\n');
+      promptForLetterInput(questionToUser, cbOnCharInput);
     } else {
       // this callback is only getting called if input is a single char.
       cbOnCharInput(input);
@@ -87,7 +90,7 @@ module.exports = {
   mapLetterToIndex,
   createPlaceholders,
   displayIncorrectGuesses,
-  promptForCharInput,
+  promptForLetterInput,
   closePrompt,
   readNounsFile,
   printEncouragment,

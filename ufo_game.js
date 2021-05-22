@@ -34,7 +34,7 @@ class UfoGame {
   };
 
   getGuessAndVerifyMatch() {
-    util.promptForCharInput('Please enter your guess: ', (charInput) => {
+    util.promptForLetterInput('Please enter your guess: ', (charInput) => {
         const char = charInput.toLowerCase();
         if(this.incorrectGuesses.has(char) || this.correctGuesses.has(char)) {
           console.log('\nYou can only guess that letter once, please try again.\n');
@@ -49,7 +49,7 @@ class UfoGame {
   };
 
   playAgainPrompt() {
-    util.promptForCharInput('\nWould you like to play again (Y/N)? ', (answer) => {
+    util.promptForLetterInput('\nWould you like to play again (Y/N)? ', (answer) => {
       if(answer === 'Y' || answer === 'y'){
         this.initGame();
       } else {
@@ -61,16 +61,14 @@ class UfoGame {
 
   correctGuess(char, indexesOfChar) {
     this.correctGuesses.add(char);
-    if(indexesOfChar.length === 1) {
-      this.placeholders[indexesOfChar[0]] = char.toUpperCase();
-    } else {
-      for(let i = 0; i < indexesOfChar.length; i++) {
-        const currIndexOfChar = indexesOfChar[i];
-        this.placeholders[currIndexOfChar] = char.toUpperCase();
-      }
+    for(let i = 0; i < indexesOfChar.length; i++) {
+      const currIndexOfChar = indexesOfChar[i];
+      this.placeholders[currIndexOfChar] = char.toUpperCase();
     }
-    console.log(placeholders.join(' '));
+
+    console.log(this.placeholders.join(' '));
     console.log('\nCorrect! You\'re closer to cracking the codeword.');
+
     this.nextGuess();
   };
 
@@ -82,7 +80,7 @@ class UfoGame {
   };
 
   nextGuess() {
-    if(checkIfWon()){
+    if(this.checkIfWon()) {
       this.gameWon();
       return;
     }
@@ -91,7 +89,7 @@ class UfoGame {
     util.displayIncorrectGuesses(this.incorrectGuesses);
     console.log(`\nCodeword:\n${this.placeholders.join(' ')}\n`);
 
-    if(checkIfGameOver()) {
+    if(this.checkIfGameOver()) {
       this.gameOver();
       return;
     }
@@ -115,7 +113,9 @@ class UfoGame {
   };
 
   gameOver() {
-    console.log('OH NO! You ran out of guesses, game over.');
+    console.log(
+`OH NO! You ran out of guesses, game over.
+The codeword is: ${this.codeword.toUpperCase()}.`);
     this.playAgainPrompt();
   };
 

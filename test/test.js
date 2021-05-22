@@ -9,7 +9,7 @@ const util = require('../ufo_utils.js');
 
 chai.use(sinonChai);
 
-describe('promptUserInput', () => {
+describe('getGuessAndVerifyMatch', () => {
   let testGame;
   beforeEach(() => {
     testGame = sinon.createStubInstance(UfoGame);
@@ -22,15 +22,14 @@ describe('promptUserInput', () => {
   });
 
   it('should call correctGuess when char is in the word', () => {
-    // mock irrelevant functions //overriding the promptForCharFunc funciton
-    util.promptForCharInput = (_, callback) => {
+    util.promptForLetterInput = (_, callback) => {
       callback('g');
     };
     testGame.correctGuess.returns();
     testGame.incorrectGuess.returns();
-    testGame.promptUserInput.restore();
+    testGame.getGuessAndVerifyMatch.restore();
 
-    testGame.promptUserInput();
+    testGame.getGuessAndVerifyMatch();
 
     expect(testGame.correctGuess).to.have.been.called;
     expect(testGame.incorrectGuess).to.have.not.been.called;
@@ -38,14 +37,14 @@ describe('promptUserInput', () => {
 
   it('should call incorrectGuess when char is NOT in the word', () => {
     // mock irrelevant functions
-    util.promptForCharInput = (_, callback) => {
+    util.promptForLetterInput = (_, callback) => {
       callback('b');
     };
     testGame.incorrectGuess.returns();
     testGame.correctGuess.returns();
-    testGame.promptUserInput.restore();
+    testGame.getGuessAndVerifyMatch.restore();
 
-    testGame.promptUserInput();
+    testGame.getGuessAndVerifyMatch();
 
     expect(testGame.incorrectGuess).to.have.been.called;
     expect(testGame.correctGuess).to.have.not.been.called;
