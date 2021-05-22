@@ -14,7 +14,8 @@ describe('getGuessAndVerifyMatch', () => {
   beforeEach(() => {
     testGame = sinon.createStubInstance(UfoGame);
     testGame.codeword = 'good';
-    testGame.incorrectGuesses = [];
+    testGame.incorrectGuesses = new Set();
+    testGame.correctGuesses = new Set();
     testGame.codewordMap = new Map();
     testGame.codewordMap.set('g', [0]);
     testGame.codewordMap.set('o', [1, 2]);
