@@ -1,0 +1,20 @@
+{
+  "name": "UfoGame",
+  "version": "1.0.0",
+  "description": "Backend project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/larakhdavies/UfoGame.git"
+  },
+  "keywords": [],
+  "author": "Lara Davies",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/larakhdavies/UfoGame/issues"
+  },
+  "homepage": "https://github.com/larakhdavies/UfoGame#readme"
+}
