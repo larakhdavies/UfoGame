@@ -14,8 +14,8 @@ Instructions: save us from alien abduction by guessing letters in the codeword.
 
 const readNounsFile = () => {
   try {
-    const wordsData = fs.readFileSync('./ufo_game/data/nouns.txt', 'utf8');
-    return arrayOfWords = wordsData.split('\n');
+    const wordsData = fs.readFileSync('./data/nouns.txt', 'utf8');
+    return wordsData.split('\n');
   } catch (err) {
     console.error(err);
   }
@@ -23,18 +23,16 @@ const readNounsFile = () => {
 
 const getRandomElement = (arrayToSelectFrom) => {
   const randomIndex = Math.floor(Math.random()*arrayToSelectFrom.length);
-  const randomElement = arrayToSelectFrom[randomIndex];
-  return randomElement;
+  return arrayToSelectFrom[randomIndex];
 };
 
-const mapCodeword = (codeword) => {
-  let codewordMap = new Map();
-  for (let i = 0; i<codeword.length; i++){
-    let currentChar = codeword[i];
-    if(!codewordMap.has(currentChar)){
+const mapLetterToIndex = (codeword) => {
+  const codewordMap = new Map();
+  for (let i = 0; i<codeword.length; i++) {
+    const currentChar = codeword[i];
+    if(!codewordMap.has(currentChar)) {
       codewordMap.set(currentChar, [i])
     } else {
-      //points to the array in heap and updates it
       codewordMap.get(currentChar).push(i);
     }
   }
@@ -42,19 +40,15 @@ const mapCodeword = (codeword) => {
 };
 
 const createPlaceholders = (codewordLength) => {
-  let dash = '_';
-  placeholders = Array(codewordLength).fill(dash);
-  return placeholders;
+  return Array(codewordLength).fill('_');
 };
 
 const displayIncorrectGuesses = (incorrectGuesses) => {
   console.log('Incorrect Guesses:');
-  if(incorrectGuesses.length === 0) {
+  if(incorrectGuesses.size === 0) {
     console.log('None');
-  } else if(incorrectGuesses.length === 1) {
-    console.log(incorrectGuesses[0].toUpperCase());
-  } else if (incorrectGuesses.length > 1) {
-    console.log(incorrectGuesses.join(' ').toUpperCase());
+  } else {
+    console.log([...incorrectGuesses].join(' ').toUpperCase());
   }
 };
 
@@ -74,13 +68,28 @@ const closePrompt = () => {
   rl.close();
 };
 
+// Show a random encouraging message when the user guesses an incorrect letter.
+const printEncouragment = (messages) => {
+  const encouragment = getRandomElement(messages);
+  console.log(encouragment + '\n');
+};
+
+const readMessagesFile = () => {
+  const stringOfMessages = fs.readFileSync('./data/messages.txt', 'utf8');
+  const messages = stringOfMessages.split('\n');
+  return messages;
+};
+
+
 module.exports = {
   displayHeading,
   getRandomElement,
-  mapCodeword,
+  mapLetterToIndex,
   createPlaceholders,
   displayIncorrectGuesses,
   promptForCharInput,
   closePrompt,
   readNounsFile,
+  printEncouragment,
+  readMessagesFile,
 };

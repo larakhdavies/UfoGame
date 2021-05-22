@@ -1,44 +1,44 @@
-const readlineSync = require('readline-sync');
 const util = require('./ufo_utils.js');
 const { displayUfo } = require('./ufo_display.js');
-const bonus = require('./bonus.js');
 
 class UfoGame {
   codeword = '';
   codewordMap = new Map();
-  incorrectGuesses = [];
-  correctGuesses = [];
+  incorrectGuesses = new Set();
+  correctGuesses = new Set();
   placeholders = [];
+  nouns = [];
+  messages = [];
 
   constructor() {
-    this.arrayOfWords = util.readNounsFile();
-    this.arrayOfMessages = bonus.readMessagesFile();
+    this.nouns = util.readNounsFile();
+    this.messages = util.readMessagesFile();
   };
 
   initGame() {
     this.resetState();
-    util.displayHeading();
-    this.codeword = util.getRandomElement(this.arrayOfWords);
-    this.codewordMap = util.mapCodeword(this.codeword);
+    this.codeword = util.getRandomElement(this.nouns);
+    this.codewordMap = util.mapLetterToIndex(this.codeword);
     this.placeholders = util.createPlaceholders(this.codeword.length);
-    console.log(this.codeword);
+
+    util.displayHeading();
     this.nextGuess();
   };
 
   resetState() {
     this.codeword = '';
     this.codewordMap = new Map();
-    this.incorrectGuesses = [];
-    this.correctGuesses = [];
+    this.incorrectGuesses = new Set();
+    this.correctGuesses = new Set();
     this.placeholders = [];
   };
 
-  promptUserInput() {
+  getGuessAndVerifyMatch() {
     util.promptForCharInput('Please enter your guess: ', (charInput) => {
         const char = charInput.toLowerCase();
-        if(this.incorrectGuesses.indexOf(char) > -1 || this.correctGuesses.indexOf(char) > -1){
+        if(this.incorrectGuesses.has(char) || this.correctGuesses.has(char)) {
           console.log('\nYou can only guess that letter once, please try again.\n');
-          this.promptUserInput();
+          this.getGuessAndVerifyMatch();
         } else if(this.codewordMap.has(char)) {
           const indexesOfChar = this.codewordMap.get(char);
           this.correctGuess(char, indexesOfChar);
@@ -60,12 +60,12 @@ class UfoGame {
   };
 
   correctGuess(char, indexesOfChar) {
-    this.correctGuesses.push(char);
+    this.correctGuesses.add(char);
     if(indexesOfChar.length === 1) {
       this.placeholders[indexesOfChar[0]] = char.toUpperCase();
     } else {
       for(let i = 0; i < indexesOfChar.length; i++) {
-        let currIndexOfChar = indexesOfChar[i];
+        const currIndexOfChar = indexesOfChar[i];
         this.placeholders[currIndexOfChar] = char.toUpperCase();
       }
     }
@@ -75,40 +75,54 @@ class UfoGame {
   };
 
   incorrectGuess(char) {
-    this.incorrectGuesses.push(char);
+    this.incorrectGuesses.add(char);
     console.log('\nIncorrect! The tractor beam pulls the person in further.\n');
-    bonus.printEncouragment(this.arrayOfMessages);
+    util.printEncouragment(this.messages);
     this.nextGuess();
   };
 
   nextGuess() {
-    displayUfo(this.incorrectGuesses.length);
-    util.displayIncorrectGuesses(this.incorrectGuesses);
-    console.log(`
-Codeword:
-${this.placeholders.join(' ')}
-`);
-    //check if won
-    let guessSoFar = this.placeholders.join('');
-    if(guessSoFar.toLowerCase() === this.codeword.toLowerCase()) {
+    if(checkIfWon()){
       this.gameWon();
       return;
     }
-    //check is gameover
-    if(this.incorrectGuesses.length >= 6) {
+
+    displayUfo(this.incorrectGuesses.size);
+    util.displayIncorrectGuesses(this.incorrectGuesses);
+    console.log(`\nCodeword:\n${this.placeholders.join(' ')}\n`);
+
+    if(checkIfGameOver()) {
       this.gameOver();
       return;
     }
-    this.promptUserInput();
+
+    this.getGuessAndVerifyMatch();
+  };
+
+  checkIfWon() {
+    const guessSoFar = this.placeholders.join('');
+    if(guessSoFar.toLowerCase() === this.codeword.toLowerCase()) {
+      return true;
+    }
+    return false;
+  };
+
+  checkIfGameOver() {
+    if(this.incorrectGuesses.size >= 6) {
+      return true;
+    }
+    return false;
   };
 
   gameOver() {
-    console.log('OH NO! You lost!');
+    console.log('OH NO! You ran out of guesses, game over.');
     this.playAgainPrompt();
   };
 
   gameWon() {
-    console.log(`Correct! You saved the person and earned a medal of honor!\nThe codeword is: ${this.codeword.toUpperCase()}.`);
+    console.log(
+`Correct! You saved the person and earned a medal of honor!
+The codeword is: ${this.codeword.toUpperCase()}.`);
     this.playAgainPrompt();
   };
 
