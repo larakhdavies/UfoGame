@@ -1,11 +1,10 @@
-//You must write two unit tests: a) one for when the user guesses a correct letter and b) one for when the user guesses an incorrect letter.
-
 const chai = require('chai');
-const expect = chai.expect;
-const sinon = require("sinon");
-const sinonChai = require("sinon-chai");
-const { UfoGame } = require('../ufo_game.js');
-const util = require('../ufo_utils.js');
+
+const { expect } = chai;
+const sinon = require('sinon');
+const sinonChai = require('sinon-chai');
+const { UfoGame } = require('../ufo_game');
+const util = require('../ufo_utils');
 
 chai.use(sinonChai);
 
@@ -37,7 +36,6 @@ describe('getGuessAndVerifyMatch', () => {
   });
 
   it('should call incorrectGuess when char is NOT in the word', () => {
-    // mock irrelevant functions
     util.promptForLetterInput = (_, callback) => {
       callback('b');
     };
@@ -50,5 +48,4 @@ describe('getGuessAndVerifyMatch', () => {
     expect(testGame.incorrectGuess).to.have.been.called;
     expect(testGame.correctGuess).to.have.not.been.called;
   });
-
 });

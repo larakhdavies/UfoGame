@@ -1,15 +1,16 @@
 const fs = require('fs');
 const readline = require('readline');
+
 const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
+  input: process.stdin,
+  output: process.stdout,
 });
 
 const displayHeading = () => {
   console.log(`
 UFO: The Game
 Instructions: save us from alien abduction by guessing letters in the codeword.
-`)
+`);
 };
 
 const readNounsFile = () => {
@@ -22,16 +23,16 @@ const readNounsFile = () => {
 };
 
 const getRandomElement = (arrayToSelectFrom) => {
-  const randomIndex = Math.floor(Math.random()*arrayToSelectFrom.length);
+  const randomIndex = Math.floor(Math.random() * arrayToSelectFrom.length);
   return arrayToSelectFrom[randomIndex];
 };
 
 const mapLetterToIndex = (codeword) => {
   const codewordMap = new Map();
-  for (let i = 0; i<codeword.length; i++) {
+  for (let i = 0; i < codeword.length; i++) {
     const currentChar = codeword[i];
-    if(!codewordMap.has(currentChar)) {
-      codewordMap.set(currentChar, [i])
+    if (!codewordMap.has(currentChar)) {
+      codewordMap.set(currentChar, [i]);
     } else {
       codewordMap.get(currentChar).push(i);
     }
@@ -39,13 +40,11 @@ const mapLetterToIndex = (codeword) => {
   return codewordMap;
 };
 
-const createPlaceholders = (codewordLength) => {
-  return Array(codewordLength).fill('_');
-};
+const createPlaceholders = (codewordLength) => Array(codewordLength).fill('_');
 
 const displayIncorrectGuesses = (incorrectGuesses) => {
   console.log('Incorrect Guesses:');
-  if(incorrectGuesses.size === 0) {
+  if (incorrectGuesses.size === 0) {
     console.log('None');
   } else {
     console.log([...incorrectGuesses].join(' ').toUpperCase());
@@ -54,14 +53,13 @@ const displayIncorrectGuesses = (incorrectGuesses) => {
 
 const promptForLetterInput = (questionToUser, cbOnCharInput) => {
   rl.question(questionToUser, (input) => {
-    if (input.length > 1){
+    if (input.length > 1) {
       console.log('\nI cannot understand your input. Please enter a single letter.\n');
       promptForLetterInput(questionToUser, cbOnCharInput);
-    } else if(!(/[a-zA-Z]/).test(input)) {
+    } else if (!(/[a-zA-Z]/).test(input)) {
       console.log('\nPlease enter a letter only (a-Z).\n');
       promptForLetterInput(questionToUser, cbOnCharInput);
     } else {
-      // this callback is only getting called if input is a single char.
       cbOnCharInput(input);
     }
   });
@@ -71,7 +69,7 @@ const closePrompt = () => {
   rl.close();
 };
 
-// Show a random encouraging message when the user guesses an incorrect letter.
+// BONUS Show a random encouraging message when the user guesses an incorrect letter.
 const printEncouragment = (messages) => {
   const encouragment = getRandomElement(messages);
   console.log(encouragment + '\n');
@@ -82,7 +80,6 @@ const readMessagesFile = () => {
   const messages = stringOfMessages.split('\n');
   return messages;
 };
-
 
 module.exports = {
   displayHeading,

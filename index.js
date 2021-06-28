@@ -1,4 +1,4 @@
-const { UfoGame } = require('./ufo_game.js');
+const { UfoGame } = require('./ufo_game');
 
 const main = () => {
   const newGame = new UfoGame();
